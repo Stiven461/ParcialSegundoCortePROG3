@@ -137,12 +137,82 @@ namespace Datos.Repositorios
 
         public bool Actualizar(Producto entidad)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var lineas = File.ReadAllLines(archivoProductos);
+                bool productoEncontrado = false;
+
+                for (int i = 0; i < lineas.Length; i++)
+                {
+                    var campos = lineas[i].Split(',');
+                    if (campos.Length == 4 && campos[0] == entidad.Identificacion)
+                    {
+                        lineas[i] = $"{entidad.Identificacion},{entidad.Nombre},{entidad.Salario},{entidad.Estado}";
+                        productoEncontrado = true;
+                    }
+                }
+
+                if (productoEncontrado)
+                {
+                    File.WriteAllLines(archivoProductos, lineas);
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("Producto no encontrado.");
+                    return false;
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine($"Error al actualizar producto: {e.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error inesperado: {ex.Message}");
+                return false;
+            }
         }
 
         public bool Eliminar(string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var lineas = File.ReadAllLines(archivoProductos);
+                bool productoEncontrado = false;
+
+                for (int i = 0; i < lineas.Length; i++)
+                {
+                    var campos = lineas[i].Split(',');
+                    if (campos.Length == 4 && campos[0] == id)
+                    {
+                        lineas[i] = null;
+                        productoEncontrado = true;
+                    }
+                }
+
+                if (productoEncontrado)
+                {
+                    File.WriteAllLines(archivoProductos, lineas);
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("Producto no encontrado.");
+                    return false;
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine($"Error al eliminar producto: {e.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error inesperado: {ex.Message}");
+                return false;
+            }
         }
     }
 }
