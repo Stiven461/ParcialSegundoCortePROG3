@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Datos.Repositorios
 {
@@ -12,25 +13,33 @@ namespace Datos.Repositorios
     {
         private string archivoProductos = "productos.txt";
 
+        public RepositorioProducto()
+        {
+            if (!File.Exists(archivoProductos))
+            {
+                File.Create(archivoProductos).Close();
+            }
+        }
+
         public bool Registrar(Producto producto)
         {
             try
             {
                 if (string.IsNullOrEmpty(producto.Identificacion) || string.IsNullOrEmpty(producto.Nombre) || producto.Salario == 0)
                 {
-                    Console.WriteLine("La identificación, el nombre y el salario son campos obligatorios.");
+                    MessageBox.Show("La identificación, el nombre y el salario son campos obligatorios.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
 
                 if (!EsNombreValido(producto.Nombre))
                 {
-                    Console.WriteLine("El nombre solo puede contener letras.");
+                    MessageBox.Show("El nombre solo puede contener letras.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
 
                 if (!Enum.IsDefined(typeof(EstadoProducto), producto.Estado))
                 {
-                    Console.WriteLine("El estado debe ser 'Activo' o 'Inactivo'.");
+                    MessageBox.Show("El estado debe ser 'Activo' o 'Inactivo'.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
 
@@ -40,21 +49,22 @@ namespace Datos.Repositorios
                     {
                         string linea = $"{producto.Identificacion},{producto.Nombre},{producto.Salario},{producto.Estado}";
                         sw.WriteLine(linea);
+                        MessageBox.Show("Producto registrado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return true;
                     }
                 }
                 else
                 {
-                    Console.WriteLine("El producto ya existe.");
+                    MessageBox.Show("El producto ya existe.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (IOException e)
             {
-                Console.WriteLine($"Error al registrar producto: {e.Message}");
+                MessageBox.Show($"Error al registrar producto: {e.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error inesperado: {ex.Message}");
+                MessageBox.Show($"Error inesperado: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return false;
